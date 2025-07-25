@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Testimonials - Urban Events</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            background-color: #0a0a0a;
+            color: #f5e6c9;
+        }
+
+    
+        nav {
+            background: transparent;
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            transition: background-color 0.3s ease;
+        }
+
+        nav.scrolled {
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(10px);
+        }
+
+        .logo {
+            height: 50px;
+        }
+
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 6px;
+            cursor: pointer;
+            z-index: 1001;
+            padding: 10px;
+        }
+
+        .hamburger span {
+            display: block;
+            width: 30px;
+            height: 3px;
+            background-color: #F5E6D3;
+            transition: all 0.3s ease;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        @media (max-width: 768px) {
+            .hamburger {
+                display: flex;
+            }
+
+            .nav-links {
+                position: fixed;
+                top: 0;
+                right: -100%;
+                height: 100vh;
+                width: 100%;
+                background: rgba(0, 0, 0, 0.98);
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                gap: 3rem;
+                transition: right 0.3s ease;
+            }
+
+            .nav-links.active {
+                right: 0;
+            }
+
+            .hamburger.active span:nth-child(1) {
+                transform: rotate(45deg) translate(8px, 8px);
+            }
+
+            .hamburger.active span:nth-child(2) {
+                opacity: 0;
+            }
+
+            .hamburger.active span:nth-child(3) {
+                transform: rotate(-45deg) translate(8px, -8px);
+            }
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #F5E6D3;
+            font-size: 1.1rem;
+            font-family: Arial, sans-serif;
+            position: relative;
+            transition: 0.3s;
+        }
+
+        .nav-links a:hover {
+            background: linear-gradient(to right, #FFD700, #FFA500);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -5px;
+            left: 0;
+            background: linear-gradient(to right, #FFD700, #FFA500);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+
+
+        .header {
+            text-align: center;
+            padding: 8rem 0;
+            background-color: #111111;
+            border-bottom: 1px solid #222;
+        }
+
+        .video-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .video-item {
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .video-item:hover {
+            transform: scale(1.05);
+        }
+
+        .video-thumbnail {
+            width: 100%;
+            aspect-ratio: 16/9;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        .video-caption {
+            text-align: center;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            color: #d4b988;
+        }
+
+        /* Lightbox styles */
+        .lightbox {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .lightbox.active {
+            display: flex;
+        }
+
+        .lightbox video {
+            max-width: 90%;
+            max-height: 90vh;
+        }
+
+        .close-lightbox {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            color: white;
+            font-size: 30px;
+            cursor: pointer;
+        }
+
+        /* AI Voice Reviews Styles */
+        .ai-reviews-section {
+            padding: 4rem 2rem;
+            background-color: #111111;
+            border-top: 1px solid #222;
+            border-bottom: 1px solid #222;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: #f5e6c9;
+            text-shadow: 0 0 10px rgba(245, 230, 201, 0.3);
+        }
+
+        .section-subtitle {
+            text-align: center;
+            color: #d4b988;
+            margin-bottom: 3rem;
+        }
+
+        .ai-reviews-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .ai-review-card {
+            background: #151515;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(245, 230, 201, 0.1);
+            border: 1px solid #222;
+        }
+
+        .review-background {
+            height: 200px;
+            position: relative;
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .play-button {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.3s ease;
+        }
+
+        .play-button:hover {
+            transform: scale(1.1);
+        }
+
+        .play-icon {
+            font-size: 24px;
+            color: #333;
+        }
+
+        .waveform {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            height: 40px;
+        }
+
+        .wave-bar {
+            width: 4px;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 2px;
+        }
+
+        .playing .wave-bar {
+            animation: waveAnimation 0.5s ease infinite;
+        }
+
+        @keyframes waveAnimation {
+            0%, 100% { height: 40%; }
+            50% { height: 100%; }
+        }
+
+        .wave-bar:nth-child(2n) {
+            animation-delay: 0.1s;
+        }
+
+        .wave-bar:nth-child(3n) {
+            animation-delay: 0.2s;
+        }
+
+        .wave-bar:nth-child(4n) {
+            animation-delay: 0.3s;
+        }
+
+        .review-text {
+            padding: 1.5rem;
+            min-height: 100px;
+            color: #f5e6c9;
+        }
+
+        /* Floating Testimonial Cards Styles */
+        .parallax-testimonials {
+            padding: 6rem 2rem;
+            background: linear-gradient(135deg, #0a0a0a 0%, #151515 100%);
+            overflow: hidden;
+            border-top: 1px solid #222;
+        }
+
+        .testimonial-container {
+            max-width: 1400px;
+            margin: 4rem auto;
+            position: relative;
+        }
+
+        .testimonial-card {
+            width: 400px;
+            height: 300px;
+            margin: 3rem auto;
+            position: relative;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(245, 230, 201, 0.05);
+            overflow: hidden;
+            opacity: 0;
+            transform: translateX(-100px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+            border: 1px solid #222;
+            background: #151515;
+        }
+
+        .testimonial-card:nth-child(even) {
+            transform: translateX(100px);
+        }
+
+        .testimonial-card.visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .card-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            opacity: 0.15;
+            transition: transform 0.3s ease;
+        }
+
+        .card-content {
+            position: relative;
+            z-index: 1;
+            padding: 2rem;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            background: linear-gradient(
+                to bottom,
+                rgba(21, 21, 21, 0.95),
+                rgba(21, 21, 21, 0.85)
+            );
+        }
+
+        .star-rating {
+            color: #ffd700;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+        }
+
+        .testimonial-card blockquote {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: #f5e6c9;
+            margin-bottom: 1.5rem;
+            font-style: italic;
+            text-shadow: 0 0 10px rgba(245, 230, 201, 0.1);
+        }
+
+        .client-info {
+            margin-top: auto;
+        }
+
+        .client-info strong {
+            display: block;
+            color: #d4b988;
+            font-size: 1.1rem;
+            text-shadow: 0 0 10px rgba(212, 185, 136, 0.3);
+        }
+
+        .client-info span {
+            color: #a89878;
+            font-size: 0.9rem;
+        }
+
+
+    
+    /* Footer Styles */
+    .footer {
+        background: #1a1a1a;
+        color: #F5E6D3;
+        padding: 4rem 2rem 2rem;
+    }
+
+    .footer-content {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 3rem;
+    }
+
+    .footer-section h3 {
+        font-size: 1.5rem;
+        margin-bottom: 1.5rem;
+        font-family: Arial, sans-serif;
+        background: linear-gradient(to right, #FFD700, #FFA500);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+    }
+
+    .footer-section p {
+        line-height: 1.6;
+        margin-bottom: 1rem;
+    }
+
+    .contact-info {
+        list-style: none;
+    }
+
+    .contact-info li {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .social-links {
+        display: flex;
+        gap: 1rem;
+        margin-top: 1.5rem;
+    }
+
+    .social-links a {
+        color: #F5E6D3;
+        font-size: 1.5rem;
+        text-decoration: none;
+        transition: transform 0.3s ease;
+    }
+
+    .social-links a:hover {
+        transform: translateY(-3px);
+        color: #FFD700;
+    }
+
+    .quick-links {
+        list-style: none;
+    }
+
+    .quick-links li {
+        margin-bottom: 0.8rem;
+    }
+
+    .quick-links a {
+        color: #F5E6D3;
+        text-decoration: none;
+        transition: color 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .quick-links a:hover {
+        color: #FFD700;
+    }
+
+    .footer-bottom {
+        margin-top: 3rem;
+        padding-top: 2rem;
+        border-top: 1px solid rgba(245, 230, 211, 0.1);
+        text-align: center;
+        font-size: 0.9rem;
+        color: rgba(245, 230, 211, 0.7);
+    }
+
+    @media (max-width: 768px) {
+        .footer-content {
+            gap: 2rem;
+        }
+        
+        .footer-section {
+            text-align: center;
+        }
+
+        .contact-info li {
+            justify-content: center;
+        }
+
+        .social-links {
+            justify-content: center;
+        }
+    }
+
+    </style>
+</head>
+<body>
+
+    <nav>
+        <img src="assets/logo.jpg" alt="Urban Events Logo" class="logo">
+        <div class="hamburger">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        <ul class="nav-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="about.html">About Us</a></li>
+            <li><a href="services.html">Services</a></li>
+            <li><a href="gallery.html">Gallery</a></li>
+            <li><a href="testimonials.html">Testimonials</a></li>
+            <li><a href="contact.html">Contact Us</a></li>
+        </ul>
+    </nav>
+    <div class="header">
+        <h1>Video Wall of Gratitude</h1>
+        <p>Hear directly from our happy clients about their unforgettable experiences</p>
+    </div>
+
+    <div class="video-grid">
+        <!-- Video 1 -->
+        <div class="video-item" onclick="openLightbox('video1')">
+            <video class="video-thumbnail" src="assets/testimonials/ritika-akash.mp4" muted></video>
+            <div class="video-caption">Ritika & Akash, Wedding – Feb 2024</div>
+        </div>
+        <!-- Video 2 -->
+        <div class="video-item" onclick="openLightbox('video2')">
+            <video class="video-thumbnail" src="assets/testimonials/priya-raj.mp4" muted></video>
+            <div class="video-caption">Priya & Raj, Anniversary – Mar 2024</div>
+        </div>
+        <!-- Video 3 -->
+        <div class="video-item" onclick="openLightbox('video3')">
+            <video class="video-thumbnail" src="assets/testimonials/neha-vikram.mp4" muted></video>
+            <div class="video-caption">Neha & Vikram, Wedding – Apr 2024</div>
+        </div>
+        <!-- Video 4 -->
+        <div class="video-item" onclick="openLightbox('video4')">
+            <video class="video-thumbnail" src="assets/testimonials/meera-corporate.mp4" muted></video>
+            <div class="video-caption">Meera, Corporate Event – May 2024</div>
+        </div>
+        <!-- Video 5 -->
+        <div class="video-item" onclick="openLightbox('video5')">
+            <video class="video-thumbnail" src="assets/testimonials/amit-birthday.mp4" muted></video>
+            <div class="video-caption">Amit, Birthday Celebration – Jun 2024</div>
+        </div>
+        <!-- Video 6 -->
+        <div class="video-item" onclick="openLightbox('video6')">
+            <video class="video-thumbnail" src="assets/testimonials/sara-anil.mp4" muted></video>
+            <div class="video-caption">Sara & Anil, Wedding – Jul 2024</div>
+        </div>
+    </div>
+
+    <!-- AI Voice Reviews Section -->
+    <div class="ai-reviews-section">
+        <h2 class="section-title">🧠 AI Voice Reviews</h2>
+        <p class="section-subtitle">Listen to our client testimonials enhanced with AI voiceover</p>
+        
+        <div class="ai-reviews-grid">
+            <!-- AI Review 1 -->
+            <div class="ai-review-card">
+                <div class="review-background" style="background-image: url('assets/wedding.png')">
+                    <button class="play-button" data-review="1">
+                        <span class="play-icon">▶</span>
+                    </button>
+                    <div class="waveform" id="waveform1">
+                        <div class="wave-bar"></div>
+                        <div class="wave-bar"></div>
+                        <div class="wave-bar"></div>
+                        <div class="wave-bar"></div>
+                        <div class="wave-bar"></div>
+                        <div class="wave-bar"></div>
+                        <div class="wave-bar"></div>
+                        <div class="wave-bar"></div>
+                    </div>
+                </div>
+                <div class="review-text" id="reviewText1"></div>
+            </div>
+
+            <!-- AI Review 2 -->
+            <div class="ai-review-card">
+                <div class="review-background" style="background-image: url('assets/coperate.png')">
+                    <button class="play-button" data-review="2">
+                        <span class="play-icon">▶</span>
+                    </button>
+                    <div class="waveform" id="waveform2">
+                        <div class="wave-bar"></div>
+                        <div class="wave-bar"></div>
+                        <div class="wave-bar"></div>
+                        <div class="wave-bar"></div>
+                        <div class="wave-bar"></div>
+                        <div class="wave-bar"></div>
+                        <div class="wave-bar"></div>
+                        <div class="wave-bar"></div>
+                    </div>
+                </div>
+                <div class="review-text" id="reviewText2"></div>
+            </div>
+
+            <!-- AI Review 3 -->
+            <div class="ai-review-card">
+                <div class="review-background" style="background-image: url('assets/birthday.png')">
+                    <button class="play-button" data-review="3">
+                        <span class="play-icon">▶</span>
+                    </button>
+                    <div class="waveform" id="waveform3">
+                        <div class="wave-bar"></div>
+                        <div class="wave-bar"></div>
+                        <div class="wave-bar"></div>
+                        <div class="wave-bar"></div>
+                        <div class="wave-bar"></div>
+                        <div class="wave-bar"></div>
+                        <div class="wave-bar"></div>
+                        <div class="wave-bar"></div>
+                    </div>
+                </div>
+                <div class="review-text" id="reviewText3"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lightbox -->
+    <div class="lightbox" id="lightbox">
+        <span class="close-lightbox" onclick="closeLightbox()">&times;</span>
+        <video id="lightbox-video" controls>
+            Your browser does not support the video element.
+        </video>
+    </div>
+
+    <!-- Floating Testimonial Cards Section -->
+    <div class="parallax-testimonials">
+        <h2 class="section-title">What Our Clients Say</h2>
+        <p class="section-subtitle">Real stories from our cherished clients</p>
+        
+        <div class="testimonial-container">
+            <!-- Card 1 -->
+            <div class="testimonial-card" data-speed="1.1">
+                <div class="card-background" style="background-image: url('assets/wedding.png')"></div>
+                <div class="card-content">
+                    <div class="star-rating">★★★★★</div>
+                    <blockquote>"Our wedding day was absolutely perfect! Urban Events understood our vision and brought it to life beyond our expectations."</blockquote>
+                    <div class="client-info">
+                        <strong>Priya & Raj</strong>
+                        <span>Wedding Celebration</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 2 -->
+            <div class="testimonial-card" data-speed="0.9">
+                <div class="card-background" style="background-image: url('assets/coperate.png')"></div>
+                <div class="card-content">
+                    <div class="star-rating">★★★★★</div>
+                    <blockquote>"The corporate gala they organized was nothing short of spectacular. Every detail was meticulously planned."</blockquote>
+                    <div class="client-info">
+                        <strong>Arun Kumar</strong>
+                        <span>Corporate Event</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 3 -->
+            <div class="testimonial-card" data-speed="1.2">
+                <div class="card-background" style="background-image: url('assets/birthday.png')"></div>
+                <div class="card-content">
+                    <div class="star-rating">★★★★★</div>
+                    <blockquote>"They turned my daughter's birthday into a magical wonderland. The creativity and execution were outstanding!"</blockquote>
+                    <div class="client-info">
+                        <strong>Riya Sharma</strong>
+                        <span>Birthday Celebration</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.querySelectorAll('.video-thumbnail').forEach(video => {
+            video.addEventListener('mouseover', function() {
+                this.play();
+            });
+            
+            video.addEventListener('mouseout', function() {
+                this.pause();
+                this.currentTime = 0;
+            });
+        });
+
+        // AI Voice Reviews functionality
+        const reviews = {
+            1: {
+                text: "Urban Events made our wedding absolutely magical! Their attention to detail and creativity exceeded our expectations. Every moment was perfectly orchestrated, creating memories that will last a lifetime.",
+                duration: 8000
+            },
+            2: {
+                text: "The corporate event they organized was flawless. Their professional team handled everything from venue selection to technical setup. Our clients were thoroughly impressed!",
+                duration: 7000
+            },
+            3: {
+                text: "My birthday celebration was beyond perfect! They transformed my vision into reality with such elegance and style. The decor, entertainment, and coordination were simply outstanding.",
+                duration: 6000
+            }
+        };
+
+        // Handle play button clicks
+        document.querySelectorAll('.play-button').forEach(button => {
+            button.addEventListener('click', function() {
+                const reviewId = this.dataset.review;
+                const waveform = document.getElementById(`waveform${reviewId}`);
+                const textElement = document.getElementById(`reviewText${reviewId}`);
+                const review = reviews[reviewId];
+
+                // Toggle play/pause
+                if (waveform.classList.contains('playing')) {
+                    waveform.classList.remove('playing');
+                    this.querySelector('.play-icon').textContent = '▶';
+                    textElement.textContent = '';
+                } else {
+                    // Stop all other playing reviews
+                    document.querySelectorAll('.waveform.playing').forEach(w => {
+                        w.classList.remove('playing');
+                        w.parentElement.querySelector('.play-icon').textContent = '▶';
+                        document.getElementById(`reviewText${w.id.replace('waveform', '')}`).textContent = '';
+                    });
+
+                    // Play this review
+                    waveform.classList.add('playing');
+                    this.querySelector('.play-icon').textContent = '⏸';
+                    
+                    // Animate text
+                    textElement.textContent = '';
+                    let charIndex = 0;
+                    const textInterval = setInterval(() => {
+                        if (charIndex < review.text.length) {
+                            textElement.textContent += review.text[charIndex];
+                            charIndex++;
+                        } else {
+                            clearInterval(textInterval);
+                        }
+                    }, review.duration / review.text.length);
+
+                    // Auto-stop after duration
+                    setTimeout(() => {
+                        if (waveform.classList.contains('playing')) {
+                            waveform.classList.remove('playing');
+                            this.querySelector('.play-icon').textContent = '▶';
+                        }
+                    }, review.duration);
+                }
+            });
+        });
+
+        // Lightbox functionality
+        function openLightbox(videoId) {
+            const lightbox = document.getElementById('lightbox');
+            const lightboxVideo = document.getElementById('lightbox-video');
+            const thumbnail = document.querySelector(`[onclick="openLightbox('${videoId}')"] video`);
+            
+            lightboxVideo.src = thumbnail.src;
+            lightbox.classList.add('active');
+            lightboxVideo.play();
+        }
+
+        function closeLightbox() {
+            const lightbox = document.getElementById('lightbox');
+            const lightboxVideo = document.getElementById('lightbox-video');
+            
+            lightboxVideo.pause();
+            lightbox.classList.remove('active');
+        }
+
+        // Close lightbox when clicking outside the video
+        document.getElementById('lightbox').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeLightbox();
+            }
+        });
+
+        // Floating Testimonial Cards functionality
+        const cards = document.querySelectorAll('.testimonial-card');
+        const cardBackgrounds = document.querySelectorAll('.card-background');
+
+        // Intersection Observer for card appearance
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, {
+            threshold: 0.3
+        });
+
+        cards.forEach(card => {
+            observer.observe(card);
+        });
+
+        // Parallax effect on scroll
+        window.addEventListener('scroll', () => {
+            cardBackgrounds.forEach(bg => {
+                const card = bg.parentElement;
+                const speed = parseFloat(card.dataset.speed) || 1;
+                const rect = card.getBoundingClientRect();
+                const scrollPosition = window.innerHeight - rect.top;
+                
+                if (scrollPosition > 0 && rect.bottom > 0) {
+                    const movement = (scrollPosition * 0.1 * speed);
+                    bg.style.transform = `translateY(${movement}px) scale(1.1)`;
+                }
+            });
+        });
+    </script>
+
+    <script>
+        // Hamburger menu functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const hamburger = document.querySelector('.hamburger');
+            const navLinks = document.querySelector('.nav-links');
+            const navLinksItems = document.querySelectorAll('.nav-links li a');
+
+            hamburger.addEventListener('click', () => {
+                hamburger.classList.toggle('active');
+                navLinks.classList.toggle('active');
+            });
+
+            // Close menu when clicking nav links
+            navLinksItems.forEach(link => {
+                link.addEventListener('click', () => {
+                    hamburger.classList.remove('active');
+                    navLinks.classList.remove('active');
+                });
+            });
+
+            // Navbar scroll effect
+            window.addEventListener('scroll', () => {
+                const nav = document.querySelector('nav');
+                if (window.scrollY > 50) {
+                    nav.classList.add('scrolled');
+                } else {
+                    nav.classList.remove('scrolled');
+                }
+            });
+        });
+    </script>
+
+<footer class="footer">
+    <div class="footer-content">
+        <div class="footer-section">
+            <h3>About Urban Events</h3>
+            <p>Creating unforgettable moments and bringing dreams to life since 2020. We specialize in crafting bespoke events that reflect your unique style and vision.</p>
+            <div class="social-links">
+                <a href="#" title="Facebook">📱</a>
+                <a href="#" title="Instagram">📸</a>
+                <a href="#" title="Twitter">🐦</a>
+                <a href="#" title="LinkedIn">💼</a>
+            </div>
+        </div>
+
+        <div class="footer-section">
+            <h3>Contact Us</h3>
+            <ul class="contact-info">
+                <li>📍 123 Event Street, Mumbai, India</li>
+                <li>📞 +91 98765 43210</li>
+                <li>📧 info@urbanevents.com</li>
+                <li>⏰ Mon-Sat: 9:00 AM - 6:00 PM</li>
+            </ul>
+        </div>
+
+        <div class="footer-section">
+            <h3>Quick Links</h3>
+            <ul class="quick-links">
+                <li><a href="#services">🎯 Our Services</a></li>
+                <li><a href="#portfolio">📸 Portfolio</a></li>
+                <li><a href="#packages">💫 Event Packages</a></li>
+                <li><a href="#blog">📝 Event Blog</a></li>
+                <li><a href="#careers">💼 Careers</a></li>
+            </ul>
+        </div>
+
+        <div class="footer-section">
+            <h3>Newsletter</h3>
+            <p>Subscribe to get exclusive updates and event planning tips!</p>
+            <form class="newsletter-form">
+                <input type="email" placeholder="Enter your email" style="padding: 0.8rem; border-radius: 25px; border: none; margin-bottom: 1rem; width: 100%; background: rgba(255, 255, 255, 0.1); color: #F5E6D3;">
+                <button type="submit" style="padding: 0.8rem 1.5rem; border-radius: 25px; border: none; background: linear-gradient(to right, #FFD700, #FFA500); color: black; font-weight: bold; width: 100%; cursor: pointer;">Subscribe</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="footer-bottom">
+        <p>&copy; 2025 Urban Events. All rights reserved. | Crafted with 💖 in India</p>
+    </div>
+</footer>
+
+</body>
+</html>

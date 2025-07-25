@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us - Urban Events</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #111111;
+            color: #F5E6D3;
+        }
+
+        nav {
+            background: rgba(0, 0, 0, 0.8);
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            transition: background-color 0.3s ease;
+        }
+
+        nav.scrolled {
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(10px);
+        }
+
+        .logo {
+            height: 50px;
+        }
+
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 6px;
+            cursor: pointer;
+            z-index: 1001;
+            padding: 10px;
+        }
+
+        .hamburger span {
+            display: block;
+            width: 30px;
+            height: 3px;
+            background-color: #F5E6D3;
+            transition: all 0.3s ease;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        @media (max-width: 768px) {
+            .hamburger {
+                display: flex;
+            }
+
+            .nav-links {
+                position: fixed;
+                top: 0;
+                right: -100%;
+                height: 100vh;
+                width: 100%;
+                background: rgba(0, 0, 0, 0.98);
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                gap: 3rem;
+                transition: right 0.3s ease;
+            }
+
+            .nav-links.active {
+                right: 0;
+            }
+
+            .hamburger.active span:nth-child(1) {
+                transform: rotate(45deg) translate(8px, 8px);
+            }
+
+            .hamburger.active span:nth-child(2) {
+                opacity: 0;
+            }
+
+            .hamburger.active span:nth-child(3) {
+                transform: rotate(-45deg) translate(8px, -8px);
+            }
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #F5E6D3;
+            font-size: 1.1rem;
+            font-family: Arial, sans-serif;
+            position: relative;
+            transition: 0.3s;
+        }
+
+        .nav-links a:hover {
+            background: linear-gradient(to right, #FFD700, #FFA500);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -5px;
+            left: 0;
+            background: linear-gradient(to right, #FFD700, #FFA500);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        /* Story Section Styles */
+        .story-section {
+            max-width: 1200px;
+            margin: 50px auto;
+            padding: 20px;
+            margin-top: 100px; /* Added to account for fixed navbar */
+        }
+
+        .opening-line {
+            font-size: 2rem;
+            line-height: 1.4;
+            text-align: center;
+            color: #fffcd1;
+            max-width: 900px;
+            margin: 0 auto 60px;
+            font-style: italic;
+        }
+
+        .timeline {
+            position: relative;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 0;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            width: 4px;
+            background: #FFD700;
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 2px;
+        }
+
+        .timeline-item {
+            margin-bottom: 60px;
+            position: relative;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .timeline-item.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .timeline-item:nth-child(odd) {
+            padding-right: 50%;
+            text-align: right;
+        }
+
+        .timeline-item:nth-child(even) {
+            padding-left: 50%;
+            text-align: left;
+        }
+
+        .timeline-content {
+            background: #222222;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(255,215,0,0.1);
+            display: inline-block;
+            max-width: 80%;
+        }
+
+        .timeline-year {
+            font-weight: bold;
+            font-size: 1.5rem;
+            color: #FFD700;
+            margin-bottom: 10px;
+        }
+
+        .timeline-dot {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: #111111;
+            border: 4px solid #FFD700;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 2px 5px rgba(255,215,0,0.2);
+        }
+
+        .trust-box {
+            background: #222222;
+            border-radius: 15px;
+            padding: 30px;
+            max-width: 600px;
+            margin: 60px auto;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(255,215,0,0.1);
+            border: 1px solid #333;
+        }
+
+        .trust-box h3 {
+            font-size: 1.8rem;
+            color: #FFD700;
+            margin-bottom: 20px;
+        }
+
+        .trust-item {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 15px 0;
+            font-size: 1.1rem;
+            color: #fffcd1;
+        }
+
+        .trust-item .checkmark {
+            margin-right: 10px;
+            color: #4CAF50;
+        }
+
+        /* Team Section Styles */
+        .team-section {
+            max-width: 1200px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+
+        .team-headline {
+            text-align: center;
+            font-size: 2.8rem;
+            margin-bottom: 50px;
+            color: #fffcd1;
+        }
+
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .team-card {
+            position: relative;
+            border-radius: 15px;
+            overflow: hidden;
+            aspect-ratio: 1;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .team-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .team-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .team-info {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 20px;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+        }
+
+        .team-card:hover .team-info {
+            transform: translateY(0);
+        }
+
+        .team-name {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .team-role {
+            font-size: 1rem;
+            color: #e0e0e0;
+            margin-bottom: 8px;
+        }
+
+        .team-quote {
+            font-size: 0.9rem;
+            font-style: italic;
+            color: #cccccc;
+        }
+
+        .team-video {
+            width: 100%;
+            max-width: 800px;
+            margin: 40px auto;
+            border-radius: 15px;
+            overflow: hidden;
+        }
+
+        .team-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 40px 0;
+        }
+
+        .team-button {
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            border: 1px solid #FFD700;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            background: #222222;
+            color: #FFD700;
+            box-shadow: 0 2px 10px rgba(255,215,0,0.1);
+        }
+
+        .team-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255,215,0,0.2);
+            background: #FFD700;
+            color: #111111;
+        }
+
+        /* Existing comparison section styles */
+        .comparison-section {
+            max-width: 1200px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+
+        .comparison-title {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 40px;
+            color: #fffcd1;
+        }
+
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .comparison-column {
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        .others {
+            background-color: #222222;
+            border: 1px solid #333;
+        }
+
+        .we-do {
+            background-color: #1a1a1a;
+            border: 1px solid #FFD700;
+        }
+
+        .comparison-item {
+            display: flex;
+            align-items: center;
+            margin: 20px 0;
+            padding: 15px;
+            background: #333333;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(255,215,0,0.1);
+        }
+
+        .column-title {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            text-align: center;
+            color: #fffcd1;
+        }
+
+        .mission-statement {
+            text-align: center;
+            font-size: 1.2rem;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 20px;
+            color: #fffcd1;
+            font-style: italic;
+            border-top: 2px solid #e0e0e0;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .icon {
+            margin-right: 15px;
+            font-size: 1.2rem;
+        }
+
+        /* Footer Styles */
+        .footer {
+            background: #1a1a1a;
+            color: #F5E6D3;
+            padding: 4rem 2rem 2rem;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 3rem;
+        }
+
+        .footer-section h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to right, #FFD700, #FFA500);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .footer-section p {
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        .contact-info {
+            list-style: none;
+        }
+
+        .contact-info li {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .social-links a {
+            color: #F5E6D3;
+            font-size: 1.5rem;
+            text-decoration: none;
+            transition: transform 0.3s ease;
+        }
+
+        .social-links a:hover {
+            transform: translateY(-3px);
+            color: #FFD700;
+        }
+
+        .quick-links {
+            list-style: none;
+        }
+
+        .quick-links li {
+            margin-bottom: 0.8rem;
+        }
+
+        .quick-links a {
+            color: #F5E6D3;
+            text-decoration: none;
+            transition: color 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .quick-links a:hover {
+            color: #FFD700;
+        }
+
+        .footer-bottom {
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(245, 230, 211, 0.1);
+            text-align: center;
+            font-size: 0.9rem;
+            color: rgba(245, 230, 211, 0.7);
+        }
+
+        @media (max-width: 768px) {
+            .footer-content {
+                gap: 2rem;
+            }
+            
+            .footer-section {
+                text-align: center;
+            }
+
+            .contact-info li {
+                justify-content: center;
+            }
+
+            .social-links {
+                justify-content: center;
+            }
+        }
+    </style>
+    <script>
+        // Hamburger menu functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const hamburger = document.querySelector('.hamburger');
+            const navLinks = document.querySelector('.nav-links');
+            const navLinksItems = document.querySelectorAll('.nav-links li a');
+
+            hamburger.addEventListener('click', () => {
+                hamburger.classList.toggle('active');
+                navLinks.classList.toggle('active');
+            });
+
+            // Close menu when clicking nav links
+            navLinksItems.forEach(link => {
+                link.addEventListener('click', () => {
+                    hamburger.classList.remove('active');
+                    navLinks.classList.remove('active');
+                });
+            });
+
+            // Navbar scroll effect
+            window.addEventListener('scroll', () => {
+                const nav = document.querySelector('nav');
+                if (window.scrollY > 50) {
+                    nav.classList.add('scrolled');
+                } else {
+                    nav.classList.remove('scrolled');
+                }
+            });
+        });
+
+        // Intersection Observer for timeline animations
+        document.addEventListener('DOMContentLoaded', function() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, {
+                threshold: 0.2
+            });
+
+            document.querySelectorAll('.timeline-item').forEach((item) => {
+                observer.observe(item);
+            });
+        });
+    </script>
+</head>
+<body>
+    <nav>
+        <img src="assets/logo.jpg" alt="Urban Events Logo" class="logo">
+        <div class="hamburger">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        <ul class="nav-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="about.html">About Us</a></li>
+            <li><a href="services.html">Services</a></li>
+            <li><a href="gallery.html">Gallery</a></li>
+            <li><a href="testimonials.html">Testimonials</a></li>
+            <li><a href="contact.html">Contact Us</a></li>
+        </ul>
+    </nav>
+
+    <section class="story-section">
+        <p class="opening-line">
+            "We didn't start as event planners. We started as dreamers with a passion for turning ordinary days into unforgettable memories."
+        </p>
+
+        <div class="timeline">
+            <div class="timeline-item">
+                <div class="timeline-content">
+                    <div class="timeline-year">2017</div>
+                    <p>A college fest that turned into our first official event</p>
+                </div>
+                <div class="timeline-dot"></div>
+            </div>
+
+            <div class="timeline-item">
+                <div class="timeline-content">
+                    <div class="timeline-year">2019</div>
+                    <p>Our first destination wedding — 700 guests, 0 mistakes</p>
+                </div>
+                <div class="timeline-dot"></div>
+            </div>
+
+            <div class="timeline-item">
+                <div class="timeline-content">
+                    <div class="timeline-year">2021</div>
+                    <p>Corporate partnerships with 10+ MNCs</p>
+                </div>
+                <div class="timeline-dot"></div>
+            </div>
+
+            <div class="timeline-item">
+                <div class="timeline-content">
+                    <div class="timeline-year">2023</div>
+                    <p>Recognized as Top Event Planners in Mumbai</p>
+                </div>
+                <div class="timeline-dot"></div>
+            </div>
+        </div>
+
+        <div class="trust-box">
+            <h3>Why People Trust Us</h3>
+            <div class="trust-item">
+                <span class="checkmark">✅</span>
+                <span>100+ successful events</span>
+            </div>
+            <div class="trust-item">
+                <span class="checkmark">✅</span>
+                <span>Award-winning designs</span>
+            </div>
+            <div class="trust-item">
+                <span class="checkmark">✅</span>
+                <span>Client-first, stress-free process</span>
+            </div>
+        </div>
+    </section>
+
+    <section class="team-section">
+        <h1 class="team-headline">💫 Meet the Dream Makers Behind the Magic</h1>
+        
+        <div class="team-grid">
+            <div class="team-card">
+                <img src="assets/riya.jpg" alt="Riya - Decor Head">
+                <div class="team-info">
+                    <div class="team-name">Riya</div>
+                    <div class="team-role">Decor Head</div>
+                    <div class="team-quote">Believes flowers can talk</div>
+                </div>
+            </div>
+            <div class="team-card">
+                <img src="assets/arun.jpg" alt="Arun - Event Director">
+                <div class="team-info">
+                    <div class="team-name">Arun</div>
+                    <div class="team-role">Event Director</div>
+                    <div class="team-quote">Makes timelines dance to perfection</div>
+                </div>
+            </div>
+            <div class="team-card">
+                <img src="assets/priya.jpg" alt="Priya - Client Relations">
+                <div class="team-info">
+                    <div class="team-name">Priya</div>
+                    <div class="team-role">Client Relations</div>
+                    <div class="team-quote">Turns dreams into reality</div>
+                </div>
+            </div>
+            <div class="team-card">
+                <img src="assets/team-raj.jpg" alt="Raj - Technical Director">
+                <div class="team-info">
+                    <div class="team-name">Raj</div>
+                    <div class="team-role">Technical Director</div>
+                    <div class="team-quote">Creates magic with lights and sound</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="team-buttons">
+            <button class="team-button">📸 Our Event Squad in Action</button>
+            <button class="team-button">🤝 Book a Free Consultation</button>
+        </div>
+
+        <div class="team-video">
+            <video width="100%" autoplay muted loop>
+                <source src="assets/about.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+        </div>
+    </section>
+
+    <section class="comparison-section">
+        <h2 class="comparison-title">We Plan Differently</h2>
+        
+        <div class="comparison-grid">
+            <div class="comparison-column others">
+                <h3 class="column-title">What Others Do</h3>
+                <div class="comparison-item">
+                    <span class="icon">📦</span>
+                    Generic Packages
+                </div>
+                <div class="comparison-item">
+                    <span class="icon">⏰</span>
+                    Rushed Execution
+                </div>
+                <div class="comparison-item">
+                    <span class="icon">📞</span>
+                    Vendors on call
+                </div>
+            </div>
+
+            <div class="comparison-column we-do">
+                <h3 class="column-title">What We Do</h3>
+                <div class="comparison-item">
+                    <span class="icon">✨</span>
+                    Custom-curated vibes
+                </div>
+                <div class="comparison-item">
+                    <span class="icon">🎨</span>
+                    Detailed moodboards & timelines
+                </div>
+                <div class="comparison-item">
+                    <span class="icon">🤝</span>
+                    Handpicked partners with contracts
+                </div>
+            </div>
+        </div>
+
+        <div class="mission-statement">
+            "Our mission is to remove stress from your special day and fill it with memories you'll relive forever."
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>About Urban Events</h3>
+                <p>Creating unforgettable moments and bringing dreams to life since 2020. We specialize in crafting bespoke events that reflect your unique style and vision.</p>
+                <div class="social-links">
+                    <a href="#" title="Facebook">📱</a>
+                    <a href="#" title="Instagram">📸</a>
+                    <a href="#" title="Twitter">🐦</a>
+                    <a href="#" title="LinkedIn">💼</a>
+                </div>
+            </div>
+
+            <div class="footer-section">
+                <h3>Contact Us</h3>
+                <ul class="contact-info">
+                    <li>📍 123 Event Street, Mumbai, India</li>
+                    <li>📞 +91 98765 43210</li>
+                    <li>📧 info@urbanevents.com</li>
+                    <li>⏰ Mon-Sat: 9:00 AM - 6:00 PM</li>
+                </ul>
+            </div>
+
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <ul class="quick-links">
+                    <li><a href="#services">🎯 Our Services</a></li>
+                    <li><a href="#portfolio">📸 Portfolio</a></li>
+                    <li><a href="#packages">💫 Event Packages</a></li>
+                    <li><a href="#blog">📝 Event Blog</a></li>
+                    <li><a href="#careers">💼 Careers</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-section">
+                <h3>Newsletter</h3>
+                <p>Subscribe to get exclusive updates and event planning tips!</p>
+                <form class="newsletter-form">
+                    <input type="email" placeholder="Enter your email" style="padding: 0.8rem; border-radius: 25px; border: none; margin-bottom: 1rem; width: 100%; background: rgba(255, 255, 255, 0.1); color: #F5E6D3;">
+                    <button type="submit" style="padding: 0.8rem 1.5rem; border-radius: 25px; border: none; background: linear-gradient(to right, #FFD700, #FFA500); color: black; font-weight: bold; width: 100%; cursor: pointer;">Subscribe</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>&copy; 2025 Urban Events. All rights reserved. | Crafted with 💖 in India</p>
+        </div>
+    </footer>
+</body>
+</html>

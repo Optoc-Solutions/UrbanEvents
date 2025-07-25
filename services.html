@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Services - Urban Events</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        nav {
+            background: transparent;
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            transition: background-color 0.3s ease;
+        }
+
+        nav.scrolled {
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(10px);
+        }
+
+        .logo {
+            height: 50px;
+        }
+
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 6px;
+            cursor: pointer;
+            z-index: 1001;
+            padding: 10px;
+        }
+
+        .hamburger span {
+            display: block;
+            width: 30px;
+            height: 3px;
+            background-color: #F5E6D3;
+            transition: all 0.3s ease;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        @media (max-width: 768px) {
+            .hamburger {
+                display: flex;
+            }
+
+            .nav-links {
+                position: fixed;
+                top: 0;
+                right: -100%;
+                height: 100vh;
+                width: 100%;
+                background: rgba(0, 0, 0, 0.98);
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                gap: 3rem;
+                transition: right 0.3s ease;
+            }
+
+            .nav-links.active {
+                right: 0;
+            }
+
+            .hamburger.active span:nth-child(1) {
+                transform: rotate(45deg) translate(8px, 8px);
+            }
+
+            .hamburger.active span:nth-child(2) {
+                opacity: 0;
+            }
+
+            .hamburger.active span:nth-child(3) {
+                transform: rotate(-45deg) translate(8px, -8px);
+            }
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #F5E6D3;
+            font-size: 1.1rem;
+            font-family: Arial, sans-serif;
+            position: relative;
+            transition: 0.3s;
+        }
+
+        .nav-links a:hover {
+            background: linear-gradient(to right, #FFD700, #FFA500);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -5px;
+            left: 0;
+            background: linear-gradient(to right, #FFD700, #FFA500);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: #000;
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        .services-slider {
+            width: 100%;
+            height: 100vh;
+            position: relative;
+        }
+
+        .swiper-slide {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .service-content {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 4rem;
+            background: linear-gradient(transparent, rgba(0,0,0,0.9));
+            z-index: 2;
+            transform: translateY(20px);
+            opacity: 0;
+            transition: all 0.6s ease;
+        }
+
+        .swiper-slide-active .service-content {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .service-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        .service-bg video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .service-bg img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            animation: scaleImage 20s infinite alternate;
+        }
+
+        @keyframes scaleImage {
+            from { transform: scale(1); }
+            to { transform: scale(1.1); }
+        }
+
+        h2 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+
+        .service-description {
+            font-size: 1.2rem;
+            line-height: 1.6;
+            margin-bottom: 2rem;
+            max-width: 600px;
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 1rem 2rem;
+            background: #fff;
+            color: #000;
+            text-decoration: none;
+            border-radius: 30px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            margin-right: 1rem;
+        }
+
+        .cta-button:hover {
+            background: #000;
+            color: #fff;
+            box-shadow: 0 0 20px rgba(255,255,255,0.3);
+        }
+
+        .service-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .trending-badge {
+            background: rgba(255,0,0,0.2);
+            color: #fff;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            animation: pulse 2s infinite;
+        }
+
+        .availability {
+            color: #4CAF50;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .pricing {
+            color: #FFD700;
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .swiper-pagination-bullet {
+            width: 12px;
+            height: 12px;
+            background: #fff;
+            opacity: 0.5;
+        }
+
+        .swiper-pagination-bullet-active {
+            opacity: 1;
+            background: #fff;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <img src="assets/logo.jpg" alt="Urban Events Logo" class="logo">
+        <div class="hamburger">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        <ul class="nav-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="about.html">About Us</a></li>
+            <li><a href="services.html">Services</a></li>
+            <li><a href="gallery.html">Gallery</a></li>
+            <li><a href="testimonials.html">Testimonials</a></li>
+            <li><a href="contact.html">Contact Us</a></li>
+        </ul>
+    </nav>
+    <div class="services-slider swiper">
+        <div class="swiper-wrapper">
+            <!-- Wedding Service -->
+            <div class="swiper-slide">
+                <div class="service-bg">
+                    <video autoplay muted loop playsinline>
+                        <source src="assets/banner.mp4" type="video/mp4">
+                    </video>
+                </div>
+                <div class="service-content">
+                    <div class="service-header">
+                        <h2>Weddings</h2>
+                        <span class="trending-badge">❤️ Most Popular</span>
+                    </div>
+                    <p class="service-description">
+                        Imagine a sunset wedding by the beach, where gentle waves provide the perfect backdrop to your love story. 
+                        Candlelit pathways, soft violin melodies, and vows that echo with promises of forever. Let us transform your 
+                        dream wedding into a breathtaking reality.
+                    </p>
+                    <p class="availability">Booking Open for Winter 2025 Weddings</p>
+                    <p class="pricing">Starting from $5,000</p>
+                    <a href="#packages" class="cta-button">See Packages</a>
+                    <a href="#book" class="cta-button">Book This Vibe</a>
+                </div>
+            </div>
+
+            <!-- Birthday Service -->
+            <div class="swiper-slide">
+                <div class="service-bg">
+                    <img src="assets/birthday.png" alt="Birthday Celebration">
+                </div>
+                <div class="service-content">
+                    <h2>Birthday Celebrations</h2>
+                    <p class="service-description">
+                        Picture a night where every moment sparkles with joy and surprise. From themed decorations that transport 
+                        you to another world, to perfectly choreographed entertainment that keeps the energy high. Create memories 
+                        that will be cherished for years to come.
+                    </p>
+                    <a href="#packages" class="cta-button">See Packages</a>
+                    <a href="#book" class="cta-button">Book This Vibe</a>
+                </div>
+            </div>
+
+            <!-- Corporate Service -->
+            <div class="swiper-slide">
+                <div class="service-bg">
+                    <img src="assets/coperate.png" alt="Corporate Event">
+                </div>
+                <div class="service-content">
+                    <h2>Corporate Events</h2>
+                    <p class="service-description">
+                        Elevate your business gatherings into memorable experiences. From sophisticated product launches to 
+                        engaging team-building retreats, we create environments that inspire collaboration and celebrate success. 
+                        Let us help you make a lasting impression.
+                    </p>
+                    <a href="#packages" class="cta-button">See Packages</a>
+                    <a href="#book" class="cta-button">Book This Vibe</a>
+                </div>
+            </div>
+
+            <!-- Anniversary Service -->
+            <div class="swiper-slide">
+                <div class="service-bg">
+                    <img src="assets/aniversary.png" alt="Anniversary Celebration">
+                </div>
+                <div class="service-content">
+                    <h2>Anniversary Celebrations</h2>
+                    <p class="service-description">
+                        Commemorate your journey of love with an enchanting celebration. Whether it's an intimate dinner under 
+                        the stars or a grand gala with loved ones, we'll create a magical atmosphere that honors your special milestone.
+                    </p>
+                    <a href="#packages" class="cta-button">See Packages</a>
+                    <a href="#book" class="cta-button">Book This Vibe</a>
+                </div>
+            </div>
+        </div>
+        <!-- Add pagination -->
+        <div class="swiper-pagination"></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
+    
+    <script>
+        // Hamburger menu functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const hamburger = document.querySelector('.hamburger');
+            const navLinks = document.querySelector('.nav-links');
+            const navLinksItems = document.querySelectorAll('.nav-links li a');
+
+            hamburger.addEventListener('click', () => {
+                hamburger.classList.toggle('active');
+                navLinks.classList.toggle('active');
+            });
+
+            // Close menu when clicking nav links
+            navLinksItems.forEach(link => {
+                link.addEventListener('click', () => {
+                    hamburger.classList.remove('active');
+                    navLinks.classList.remove('active');
+                });
+            });
+
+            // Navbar scroll effect
+            window.addEventListener('scroll', () => {
+                const nav = document.querySelector('nav');
+                if (window.scrollY > 50) {
+                    nav.classList.add('scrolled');
+                } else {
+                    nav.classList.remove('scrolled');
+                }
+            });
+        });
+    </script>
+
+    <!-- Moodboard Style Services Grid -->
+    <section class="moodboard-services">
+        <div class="moodboard-container">
+            <!-- Wedding Moodboard -->
+            <div class="moodboard-card">
+                <div class="moodboard-grid">
+                    <img src="assets/wedding.png" alt="Wedding Decor" class="grid-item main">
+                    <img src="assets/banner.mp4" alt="Wedding Entry" class="grid-item">
+                    <img src="assets/team-priya.jpg" alt="Wedding Setup" class="grid-item">
+                    <img src="assets/team-raj.jpg" alt="Wedding Music" class="grid-item">
+                </div>
+                <div class="moodboard-content">
+                    <h3>Weddings</h3>
+                    <p>Where timeless elegance meets raw emotion</p>
+                </div>
+            </div>
+
+            <!-- Birthday Moodboard -->
+            <div class="moodboard-card">
+                <div class="moodboard-grid">
+                    <img src="assets/birthday.png" alt="Birthday Decor" class="grid-item main">
+                    <img src="assets/priya.jpg" alt="Birthday Setup" class="grid-item">
+                    <img src="assets/riya.jpg" alt="Birthday Entertainment" class="grid-item">
+                    <img src="assets/arun.jpg" alt="Birthday Catering" class="grid-item">
+                </div>
+                <div class="moodboard-content">
+                    <h3>Birthday Celebrations</h3>
+                    <p>Creating moments that sparkle with joy</p>
+                </div>
+            </div>
+
+            <!-- Corporate Moodboard -->
+            <div class="moodboard-card">
+                <div class="moodboard-grid">
+                    <img src="assets/coperate.png" alt="Corporate Event" class="grid-item main">
+                    <img src="assets/logo.jpg" alt="Corporate Setup" class="grid-item">
+                    <img src="assets/team-priya.jpg" alt="Team Building" class="grid-item">
+                    <img src="assets/team-raj.jpg" alt="Corporate Space" class="grid-item">
+                </div>
+                <div class="moodboard-content">
+                    <h3>Corporate Events</h3>
+                    <p>Elevating business into unforgettable experiences</p>
+                </div>
+            </div>
+
+            <!-- Anniversary Moodboard -->
+            <div class="moodboard-card">
+                <div class="moodboard-grid">
+                    <img src="assets/aniversary.png" alt="Anniversary Celebration" class="grid-item main">
+                    <img src="assets/priya.jpg" alt="Anniversary Setup" class="grid-item">
+                    <img src="assets/riya.jpg" alt="Anniversary Decor" class="grid-item">
+                    <img src="assets/arun.jpg" alt="Anniversary Dining" class="grid-item">
+                </div>
+                <div class="moodboard-content">
+                    <h3>Anniversaries</h3>
+                    <p>Celebrating love stories, one milestone at a time</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <style>
+        .moodboard-services {
+            padding: 4rem 2rem;
+            background: #0a0a0a;
+        }
+
+        .moodboard-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .moodboard-card {
+            background: #111;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .moodboard-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 0 30px rgba(255,255,255,0.2);
+        }
+
+        .moodboard-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+            gap: 4px;
+            aspect-ratio: 1;
+        }
+
+        .grid-item {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .grid-item.main {
+            grid-row: span 2;
+            grid-column: span 1;
+        }
+
+        .moodboard-content {
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .moodboard-content h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: #fff;
+        }
+
+        .moodboard-content p {
+            color: #aaa;
+            font-size: 1rem;
+            line-height: 1.4;
+        }
+    </style>
+
+    <script>
+        const swiper = new Swiper('.services-slider', {
+            speed: 1000,
+            spaceBetween: 0,
+            effect: 'fade',
+            loop: true,
+            autoplay: {
+                delay: 5000,
+                disableOnInteraction: false,
+            },
+            pagination: {
+                el: '.swiper-pagination',
+                clickable: true
+            }
+        });
+    </script>
+
+    <!-- Service Journey Cards Section -->
+    <section class="service-journey">
+        <div class="journey-container">
+            <!-- Wedding Journey Card -->
+            <div class="journey-card">
+                <div class="journey-header">
+                    <i class="journey-icon">💑</i>
+                    <h3>Wedding Planning</h3>
+                    <p class="emotional-hook">Your dream wedding, without the stress</p>
+                </div>
+                <div class="journey-steps">
+                    <div class="step">
+                        <h4>Planning</h4>
+                        <p>Personalized consultation and vision boarding</p>
+                    </div>
+                    <div class="step">
+                        <h4>Decor</h4>
+                        <p>Custom themes and stunning arrangements</p>
+                    </div>
+                    <div class="step">
+                        <h4>Vendors</h4>
+                        <p>Curated selection of trusted partners</p>
+                    </div>
+                    <div class="step">
+                        <h4>Execution</h4>
+                        <p>Flawless coordination on your big day</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Birthday Journey Card -->
+            <div class="journey-card">
+                <div class="journey-header">
+                    <i class="journey-icon">🎂</i>
+                    <h3>Birthday Celebrations</h3>
+                    <p class="emotional-hook">Making every age worth celebrating</p>
+                </div>
+                <div class="journey-steps">
+                    <div class="step">
+                        <h4>Planning</h4>
+                        <p>Theme selection and guest list management</p>
+                    </div>
+                    <div class="step">
+                        <h4>Decor</h4>
+                        <p>Age-appropriate decorations and surprises</p>
+                    </div>
+                    <div class="step">
+                        <h4>Vendors</h4>
+                        <p>Entertainment and catering coordination</p>
+                    </div>
+                    <div class="step">
+                        <h4>Execution</h4>
+                        <p>Seamless celebration management</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Corporate Journey Card -->
+            <div class="journey-card">
+                <div class="journey-header">
+                    <i class="journey-icon">💼</i>
+                    <h3>Corporate Events</h3>
+                    <p class="emotional-hook">Elevating your business presence</p>
+                </div>
+                <div class="journey-steps">
+                    <div class="step">
+                        <h4>Planning</h4>
+                        <p>Objective setting and timeline creation</p>
+                    </div>
+                    <div class="step">
+                        <h4>Decor</h4>
+                        <p>Professional and branded environment</p>
+                    </div>
+                    <div class="step">
+                        <h4>Vendors</h4>
+                        <p>Professional service coordination</p>
+                    </div>
+                    <div class="step">
+                        <h4>Execution</h4>
+                        <p>Precise timing and professional delivery</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Anniversary Journey Card -->
+            <div class="journey-card">
+                <div class="journey-header">
+                    <i class="journey-icon">❤️</i>
+                    <h3>Anniversary Celebrations</h3>
+                    <p class="emotional-hook">Rekindling beautiful memories</p>
+                </div>
+                <div class="journey-steps">
+                    <div class="step">
+                        <h4>Planning</h4>
+                        <p>Personalized milestone celebration</p>
+                    </div>
+                    <div class="step">
+                        <h4>Decor</h4>
+                        <p>Romantic and meaningful settings</p>
+                    </div>
+                    <div class="step">
+                        <h4>Vendors</h4>
+                        <p>Specialized experience creators</p>
+                    </div>
+                    <div class="step">
+                        <h4>Execution</h4>
+                        <p>Memorable moment orchestration</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <style>
+        .service-journey {
+            padding: 4rem 2rem;
+            background: #0a0a0a;
+        }
+
+        .journey-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+
+        .journey-card {
+            background: #111;
+            border-radius: 15px;
+            padding: 2rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            transform-style: preserve-3d;
+            perspective: 1000px;
+        }
+
+        .journey-card:hover {
+            transform: translateY(-10px) rotateX(5deg) rotateY(5deg);
+            box-shadow: 0 15px 30px rgba(255,255,255,0.1);
+        }
+
+        .journey-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .journey-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            display: inline-block;
+        }
+
+        .journey-header h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: #fff;
+        }
+
+        .emotional-hook {
+            color: #aaa;
+            font-size: 1rem;
+            font-style: italic;
+        }
+
+        .journey-steps {
+            display: grid;
+            gap: 1rem;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+        }
+
+        .journey-card:hover .journey-steps {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .step {
+            background: rgba(255,255,255,0.05);
+            padding: 1rem;
+            border-radius: 8px;
+        }
+
+        .step h4 {
+            color: #fff;
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        .step p {
+            color: #aaa;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+    /* Footer Styles */
+    .footer {
+        background: #1a1a1a;
+        color: #F5E6D3;
+        padding: 4rem 2rem 2rem;
+    }
+
+    .footer-content {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 3rem;
+    }
+
+    .footer-section h3 {
+        font-size: 1.5rem;
+        margin-bottom: 1.5rem;
+        font-family: Arial, sans-serif;
+        background: linear-gradient(to right, #FFD700, #FFA500);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+    }
+
+    .footer-section p {
+        line-height: 1.6;
+        margin-bottom: 1rem;
+    }
+
+    .contact-info {
+        list-style: none;
+    }
+
+    .contact-info li {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .social-links {
+        display: flex;
+        gap: 1rem;
+        margin-top: 1.5rem;
+    }
+
+    .social-links a {
+        color: #F5E6D3;
+        font-size: 1.5rem;
+        text-decoration: none;
+        transition: transform 0.3s ease;
+    }
+
+    .social-links a:hover {
+        transform: translateY(-3px);
+        color: #FFD700;
+    }
+
+    .quick-links {
+        list-style: none;
+    }
+
+    .quick-links li {
+        margin-bottom: 0.8rem;
+    }
+
+    .quick-links a {
+        color: #F5E6D3;
+        text-decoration: none;
+        transition: color 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .quick-links a:hover {
+        color: #FFD700;
+    }
+
+    .footer-bottom {
+        margin-top: 3rem;
+        padding-top: 2rem;
+        border-top: 1px solid rgba(245, 230, 211, 0.1);
+        text-align: center;
+        font-size: 0.9rem;
+        color: rgba(245, 230, 211, 0.7);
+    }
+
+    @media (max-width: 768px) {
+        .footer-content {
+            gap: 2rem;
+        }
+        
+        .footer-section {
+            text-align: center;
+        }
+
+        .contact-info li {
+            justify-content: center;
+        }
+
+        .social-links {
+            justify-content: center;
+        }
+    }
+
+    </style>
+
+
+<footer class="footer">
+    <div class="footer-content">
+        <div class="footer-section">
+            <h3>About Urban Events</h3>
+            <p>Creating unforgettable moments and bringing dreams to life since 2020. We specialize in crafting bespoke events that reflect your unique style and vision.</p>
+            <div class="social-links">
+                <a href="#" title="Facebook">📱</a>
+                <a href="#" title="Instagram">📸</a>
+                <a href="#" title="Twitter">🐦</a>
+                <a href="#" title="LinkedIn">💼</a>
+            </div>
+        </div>
+
+        <div class="footer-section">
+            <h3>Contact Us</h3>
+            <ul class="contact-info">
+                <li>📍 123 Event Street, Mumbai, India</li>
+                <li>📞 +91 98765 43210</li>
+                <li>📧 info@urbanevents.com</li>
+                <li>⏰ Mon-Sat: 9:00 AM - 6:00 PM</li>
+            </ul>
+        </div>
+
+        <div class="footer-section">
+            <h3>Quick Links</h3>
+            <ul class="quick-links">
+                <li><a href="#services">🎯 Our Services</a></li>
+                <li><a href="#portfolio">📸 Portfolio</a></li>
+                <li><a href="#packages">💫 Event Packages</a></li>
+                <li><a href="#blog">📝 Event Blog</a></li>
+                <li><a href="#careers">💼 Careers</a></li>
+            </ul>
+        </div>
+
+        <div class="footer-section">
+            <h3>Newsletter</h3>
+            <p>Subscribe to get exclusive updates and event planning tips!</p>
+            <form class="newsletter-form">
+                <input type="email" placeholder="Enter your email" style="padding: 0.8rem; border-radius: 25px; border: none; margin-bottom: 1rem; width: 100%; background: rgba(255, 255, 255, 0.1); color: #F5E6D3;">
+                <button type="submit" style="padding: 0.8rem 1.5rem; border-radius: 25px; border: none; background: linear-gradient(to right, #FFD700, #FFA500); color: black; font-weight: bold; width: 100%; cursor: pointer;">Subscribe</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="footer-bottom">
+        <p>&copy; 2025 Urban Events. All rights reserved. | Crafted with 💖 in India</p>
+    </div>
+</footer>
+
+</body>
+</html>

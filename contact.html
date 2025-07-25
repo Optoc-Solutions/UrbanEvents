@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Let's Plan Something Beautiful - Urban Events</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: #000000;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            color: #f4d03f;
+            padding-top: 10rem;
+        }
+
+    
+        nav {
+            background: transparent;
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            transition: background-color 0.3s ease;
+        }
+
+        nav.scrolled {
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(10px);
+        }
+
+        .logo {
+            height: 50px;
+        }
+
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 6px;
+            cursor: pointer;
+            z-index: 1001;
+            padding: 10px;
+        }
+
+        .hamburger span {
+            display: block;
+            width: 30px;
+            height: 3px;
+            background-color: #F5E6D3;
+            transition: all 0.3s ease;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        @media (max-width: 768px) {
+            .hamburger {
+                display: flex;
+            }
+
+            .nav-links {
+                position: fixed;
+                top: 0;
+                right: -100%;
+                height: 100vh;
+                width: 100%;
+                background: rgba(0, 0, 0, 0.98);
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                gap: 3rem;
+                transition: right 0.3s ease;
+            }
+
+            .nav-links.active {
+                right: 0;
+            }
+
+            .hamburger.active span:nth-child(1) {
+                transform: rotate(45deg) translate(8px, 8px);
+            }
+
+            .hamburger.active span:nth-child(2) {
+                opacity: 0;
+            }
+
+            .hamburger.active span:nth-child(3) {
+                transform: rotate(-45deg) translate(8px, -8px);
+            }
+
+            .chat-container {
+                padding: 4rem 2rem;
+            }
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #F5E6D3;
+            font-size: 1.1rem;
+            font-family: Arial, sans-serif;
+            position: relative;
+            transition: 0.3s;
+        }
+
+        .nav-links a:hover {
+            background: linear-gradient(to right, #FFD700, #FFA500);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -5px;
+            left: 0;
+            background: linear-gradient(to right, #FFD700, #FFA500);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+
+        .chat-container {
+            max-width: 600px;
+            margin: 2rem auto;
+            background: #111111;
+            border-radius: 20px;
+            box-shadow: 0 5px 15px rgba(244, 208, 63, 0.1);
+            padding: 5rem;
+        }
+
+        .chat-title {
+            text-align: center;
+            color: #f4d03f;
+            margin-bottom: 2rem;
+            font-size: 1.8rem;
+        }
+
+        .chat-message {
+            margin-bottom: 1.5rem;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s ease;
+        }
+
+        .chat-message.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .chat-question {
+            background: #222222;
+            padding: 1rem 1.5rem;
+            border-radius: 15px;
+            display: inline-block;
+            margin-bottom: 1rem;
+            color: #f4d03f;
+        }
+
+        .chat-input {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #333333;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+            margin-top: 0.5rem;
+            background: #1a1a1a;
+            color: #f4d03f;
+        }
+
+        .chat-input:focus {
+            outline: none;
+            border-color: #4a90e2;
+        }
+
+        .chat-button {
+            background: #f4d03f;
+            color: #000000;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            margin-top: 1rem;
+        }
+
+        .chat-button:hover {
+            background: #f1c40f;
+        }
+
+        .chat-response {
+            background: #2c2c2c;
+            padding: 1rem 1.5rem;
+            border-radius: 15px;
+            display: inline-block;
+            margin-left: auto;
+            color: #f4d03f;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .success-message {
+            text-align: center;
+            color: #f4d03f;
+            padding: 1rem;
+            border-radius: 10px;
+            background: #222222;
+            margin-top: 1rem;
+        }
+
+        /* Footer Styles */
+    .footer {
+        background: #1a1a1a;
+        color: #F5E6D3;
+        padding: 4rem 2rem 2rem;
+    }
+
+    .footer-content {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 3rem;
+    }
+
+    .footer-section h3 {
+        font-size: 1.5rem;
+        margin-bottom: 1.5rem;
+        font-family: Arial, sans-serif;
+        background: linear-gradient(to right, #FFD700, #FFA500);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+    }
+
+    .footer-section p {
+        line-height: 1.6;
+        margin-bottom: 1rem;
+    }
+
+    .contact-info {
+        list-style: none;
+    }
+
+    .contact-info li {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .social-links {
+        display: flex;
+        gap: 1rem;
+        margin-top: 1.5rem;
+    }
+
+    .social-links a {
+        color: #F5E6D3;
+        font-size: 1.5rem;
+        text-decoration: none;
+        transition: transform 0.3s ease;
+    }
+
+    .social-links a:hover {
+        transform: translateY(-3px);
+        color: #FFD700;
+    }
+
+    .quick-links {
+        list-style: none;
+    }
+
+    .quick-links li {
+        margin-bottom: 0.8rem;
+    }
+
+    .quick-links a {
+        color: #F5E6D3;
+        text-decoration: none;
+        transition: color 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .quick-links a:hover {
+        color: #FFD700;
+    }
+
+    .footer-bottom {
+        margin-top: 3rem;
+        padding-top: 2rem;
+        border-top: 1px solid rgba(245, 230, 211, 0.1);
+        text-align: center;
+        font-size: 0.9rem;
+        color: rgba(245, 230, 211, 0.7);
+    }
+
+    @media (max-width: 768px) {
+        .footer-content {
+            gap: 2rem;
+        }
+        
+        .footer-section {
+            text-align: center;
+        }
+
+        .contact-info li {
+            justify-content: center;
+        }
+
+        .social-links {
+            justify-content: center;
+        }
+    }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <img src="assets/logo.jpg" alt="Urban Events Logo" class="logo">
+        <div class="hamburger">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        <ul class="nav-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="about.html">About Us</a></li>
+            <li><a href="services.html">Services</a></li>
+            <li><a href="gallery.html">Gallery</a></li>
+            <li><a href="testimonials.html">Testimonials</a></li>
+            <li><a href="contact.html">Contact Us</a></li>
+        </ul>
+    </nav>
+    <div class="chat-container">
+        <h1 class="chat-title">Let's Plan Something Beautiful</h1>
+        <form id="chatForm">
+            <div class="chat-message" id="nameQuestion">
+                <div class="chat-question">👋 Hi there! What's your name?</div>
+                <input type="text" class="chat-input" id="name" required>
+                <button type="button" class="chat-button" onclick="nextQuestion('nameQuestion', 'dateQuestion')">Next</button>
+            </div>
+
+            <div class="chat-message hidden" id="dateQuestion">
+                <div class="chat-question">📅 Nice to meet you! When is your event?</div>
+                <input type="date" class="chat-input" id="date" required>
+                <button type="button" class="chat-button" onclick="nextQuestion('dateQuestion', 'dreamQuestion')">Next</button>
+            </div>
+
+            <div class="chat-message hidden" id="dreamQuestion">
+                <div class="chat-question">💭 Tell us about your dream event - we're all ears!</div>
+                <textarea class="chat-input" id="dream" rows="4" required></textarea>
+                <button type="submit" class="chat-button">Send</button>
+            </div>
+        </form>
+        <div id="successMessage" class="success-message hidden">
+            Thank you for sharing your dream with us! We'll get back to you soon to make it a reality. ✨
+        </div>
+    </div>
+
+    <script>
+        function nextQuestion(currentId, nextId) {
+            const currentQuestion = document.getElementById(currentId);
+            const nextQuestion = document.getElementById(nextId);
+            const input = currentQuestion.querySelector('input, textarea');
+
+            if (input.value.trim() === '') {
+                input.focus();
+                return;
+            }
+
+            nextQuestion.classList.remove('hidden');
+            setTimeout(() => {
+                nextQuestion.classList.add('visible');
+            }, 100);
+
+            const response = document.createElement('div');
+            response.className = 'chat-response';
+            response.textContent = input.value;
+            currentQuestion.appendChild(response);
+            
+            currentQuestion.querySelector('.chat-input').style.display = 'none';
+            currentQuestion.querySelector('.chat-button').style.display = 'none';
+        }
+
+        document.getElementById('chatForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const dream = document.getElementById('dream');
+            if (dream.value.trim() === '') {
+                dream.focus();
+                return;
+            }
+
+            const response = document.createElement('div');
+            response.className = 'chat-response';
+            response.textContent = dream.value;
+            document.getElementById('dreamQuestion').appendChild(response);
+            
+            dream.style.display = 'none';
+            dream.nextElementSibling.style.display = 'none';
+
+            document.getElementById('successMessage').classList.remove('hidden');
+        });
+
+        // Show first question with animation on page load
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('nameQuestion').classList.add('visible');
+            }, 100);
+        });
+
+        // Hamburger menu functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const hamburger = document.querySelector('.hamburger');
+            const navLinks = document.querySelector('.nav-links');
+            const navLinksItems = document.querySelectorAll('.nav-links li a');
+
+            hamburger.addEventListener('click', () => {
+                hamburger.classList.toggle('active');
+                navLinks.classList.toggle('active');
+            });
+
+            // Close menu when clicking nav links
+            navLinksItems.forEach(link => {
+                link.addEventListener('click', () => {
+                    hamburger.classList.remove('active');
+                    navLinks.classList.remove('active');
+                });
+            });
+
+            // Navbar scroll effect
+            window.addEventListener('scroll', () => {
+                const nav = document.querySelector('nav');
+                if (window.scrollY > 50) {
+                    nav.classList.add('scrolled');
+                } else {
+                    nav.classList.remove('scrolled');
+                }
+            });
+        });
+    </script>
+
+
+<footer class="footer">
+    <div class="footer-content">
+        <div class="footer-section">
+            <h3>About Urban Events</h3>
+            <p>Creating unforgettable moments and bringing dreams to life since 2020. We specialize in crafting bespoke events that reflect your unique style and vision.</p>
+            <div class="social-links">
+                <a href="#" title="Facebook">📱</a>
+                <a href="#" title="Instagram">📸</a>
+                <a href="#" title="Twitter">🐦</a>
+                <a href="#" title="LinkedIn">💼</a>
+            </div>
+        </div>
+
+        <div class="footer-section">
+            <h3>Contact Us</h3>
+            <ul class="contact-info">
+                <li>📍 123 Event Street, Mumbai, India</li>
+                <li>📞 +91 98765 43210</li>
+                <li>📧 info@urbanevents.com</li>
+                <li>⏰ Mon-Sat: 9:00 AM - 6:00 PM</li>
+            </ul>
+        </div>
+
+        <div class="footer-section">
+            <h3>Quick Links</h3>
+            <ul class="quick-links">
+                <li><a href="#services">🎯 Our Services</a></li>
+                <li><a href="#portfolio">📸 Portfolio</a></li>
+                <li><a href="#packages">💫 Event Packages</a></li>
+                <li><a href="#blog">📝 Event Blog</a></li>
+                <li><a href="#careers">💼 Careers</a></li>
+            </ul>
+        </div>
+
+        <div class="footer-section">
+            <h3>Newsletter</h3>
+            <p>Subscribe to get exclusive updates and event planning tips!</p>
+            <form class="newsletter-form">
+                <input type="email" placeholder="Enter your email" style="padding: 0.8rem; border-radius: 25px; border: none; margin-bottom: 1rem; width: 100%; background: rgba(255, 255, 255, 0.1); color: #F5E6D3;">
+                <button type="submit" style="padding: 0.8rem 1.5rem; border-radius: 25px; border: none; background: linear-gradient(to right, #FFD700, #FFA500); color: black; font-weight: bold; width: 100%; cursor: pointer;">Subscribe</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="footer-bottom">
+        <p>&copy; 2025 Urban Events. All rights reserved. | Crafted with 💖 in India</p>
+    </div>
+</footer>
+
+</body>
+</html>
